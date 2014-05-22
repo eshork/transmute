@@ -18,7 +18,7 @@ If inputFile is - or not provided, stdin is used.
  -A               Added characters include upper alpha
  --list=<chars>   Provide a custom list of characters to use for additions
  -c               Capitalize letters
- -d               Include debug output
+ -d               Include debug output (to stderr)
 
 Order of operations (unused operations are skipped):
 	- InsertEnds Loop
@@ -61,6 +61,7 @@ def cChg_AddSet_AddSymbols():
 	pass
 
 def main():
+	global CONF_Debug
 	global CONF_infile
 	global CONF_leet
 	global CONF_capitalize
@@ -69,6 +70,7 @@ def main():
 	global CONF_NumInsert
 	global CONF_NumEdgeInsert
 	global CONF_AddSet
+	CONF_Debug = False
 	CONF_infile = "-"
 	CONF_leet = False
 	CONF_capitalize = False
@@ -80,7 +82,7 @@ def main():
 
 	# parse command line options
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "htlcp:P:i:I:nsaA", ["help","list="])
+		opts, args = getopt.getopt(sys.argv[1:], "hdtlcp:P:i:I:nsaA", ["help","list="])
 		# pprint(opts)
 		# pprint(args)
 	except getopt.error, msg:
@@ -92,6 +94,8 @@ def main():
 		if o in ("-h", "--help"):
 			print __doc__
 			sys.exit(0)
+		if o in ("-d"):
+			CONF_Debug = True
 		if o in ("-t"):
 			CONF_leet = True
 			CONF_capitalize = True
@@ -134,14 +138,15 @@ def main():
 
 
 	# debug output
-	print ("CONF_infile = " + CONF_infile)
-	print ("CONF_leet = " + str(CONF_leet))
-	print ("CONF_capitalize = " + str(CONF_capitalize))
-	print ("CONF_NumAppend = " + str(CONF_NumAppend))
-	print ("CONF_NumPrepend = " + str(CONF_NumPrepend))
-	print ("CONF_NumInsert = " + str(CONF_NumInsert))
-	print ("CONF_NumEdgeInsert = " + str(CONF_NumEdgeInsert))
-	print ("CONF_AddSet = [" + str(CONF_AddSet) + "]")
+	if(CONF_Debug):
+		sys.stderr.write("CONF_infile = " + CONF_infile + "\n")
+		sys.stderr.write("CONF_leet = " + str(CONF_leet) + "\n")
+		sys.stderr.write("CONF_capitalize = " + str(CONF_capitalize) + "\n")
+		sys.stderr.write("CONF_NumAppend = " + str(CONF_NumAppend) + "\n")
+		sys.stderr.write("CONF_NumPrepend = " + str(CONF_NumPrepend) + "\n")
+		sys.stderr.write("CONF_NumInsert = " + str(CONF_NumInsert) + "\n")
+		sys.stderr.write("CONF_NumEdgeInsert = " + str(CONF_NumEdgeInsert) + "\n")
+		sys.stderr.write("CONF_AddSet = [" + str(CONF_AddSet) + "]" + "\n")
 
 
 
