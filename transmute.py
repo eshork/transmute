@@ -139,6 +139,7 @@ def main():
 
 	# debug output
 	if(CONF_Debug):
+		sys.stderr.write("CONF_Debug = " + str(CONF_Debug) + "\n")
 		sys.stderr.write("CONF_infile = " + CONF_infile + "\n")
 		sys.stderr.write("CONF_leet = " + str(CONF_leet) + "\n")
 		sys.stderr.write("CONF_capitalize = " + str(CONF_capitalize) + "\n")
