@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""transmute [opts] [inputFile]
+"""Usage: transmute [opts] [inputFile]
 
 Generates transmutations of input words according to selected options.
 
@@ -18,6 +18,7 @@ If inputFile is - or not provided, stdin is used.
  -A               Added characters include upper alpha
  --list=<chars>   Provide a custom list of characters to use for additions
  -c               Capitalize letters
+ -d               Include debug output
 
 Order of operations (unused operations are skipped):
 	- InsertEnds Loop
@@ -132,7 +133,7 @@ def main():
 	CONF_AddSet = RemoveStrDupes(CONF_AddSet)
 
 
-
+	# debug output
 	print ("CONF_infile = " + CONF_infile)
 	print ("CONF_leet = " + str(CONF_leet))
 	print ("CONF_capitalize = " + str(CONF_capitalize))
