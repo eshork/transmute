@@ -224,7 +224,7 @@ def GoTransmuteLeet(origLine):
 	if(CONF_Debug):
 		sys.stderr.write("...GoTransmuteLeet\n")
 	if(True == CONF_leet):
-		Print(origLine) # change to leet transmute
+		TransmuteLeet(origLine, Print) # change to leet transmute
 	else:
 		Print(origLine)
 
@@ -282,7 +282,17 @@ def TransmuteCaps(baseWord, nextFunc):
 	curVal = getNextSubstitute(baseWord, matrix)
 	
 	while( len(curVal)>0 ):
-		print curVal
+		nextFunc(curVal)
+		curVal = getNextSubstitute(curVal, matrix)
+
+def TransmuteLeet(baseWord, nextFunc):
+	nextFunc(baseWord) # first passed call is clean
+
+	matrix = buildLeetSubstitutesMatrix(baseWord)
+	curVal = getNextSubstitute(baseWord, matrix)
+	
+	while( len(curVal)>0 ):
+		nextFunc(curVal)
 		curVal = getNextSubstitute(curVal, matrix)
 		
 
@@ -310,6 +320,25 @@ def TransmuteCaps(baseWord, nextFunc):
 # b 8
 # h |-|
 
+
+def buildLeetSubstitutesMatrix(origLine):
+	out = []
+	capMap = {
+		"i" : ["i","!","|",";"],
+		"l" : ["l", "1","|","!"],
+	}
+	# for c in "abcdefghijklmnopqrstuvwxyz":
+	# 	capMap[c] = [c, c.upper()]
+
+
+	for c in origLine:
+		if capMap.has_key(c):
+			out += [capMap[c]]
+		else:
+			out += [c]
+	return out
+	pass
+
 def buildCapitalizationSubstitutesMatrix(origLine):
 	out = []
 	capMap = {}
@@ -321,9 +350,6 @@ def buildCapitalizationSubstitutesMatrix(origLine):
 		else:
 			out += [c]
 	return out
-	pass
-
-def buildLeetSubstitutesMatrix(origLine):
 	pass
 
 def getNextSubstitute(curVal, valMatrix, curIndex = 0):
