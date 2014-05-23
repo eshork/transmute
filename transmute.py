@@ -123,6 +123,8 @@ def main():
 			cChg_AddSet_AddSymbols()
 		if o in ("--list"):
 			CONF_AddSet = CONF_AddSet + str(a)
+		if o in ("-c"):
+			CONF_capitalize = True
 
 	# process arguments
 	if len(args) > 1:
@@ -163,43 +165,64 @@ def main():
 
 def GoTransmute(origLine):
 	global CONF_AddSet
+	global CONF_Debug
+	if(CONF_Debug):
+		sys.stderr.write("...GoTransmute\n")
 	if(len(origLine)>0):
 		if(len(CONF_AddSet)>0):
 			GoTransmuteEdgeInsert(origLine)
 		else:
-			Print(origLine)
+			GoTransmuteCaps(origLine)
 def GoTransmuteEdgeInsert(origLine):
 	global CONF_NumEdgeInsert
+	global CONF_Debug
+	if(CONF_Debug):
+		sys.stderr.write("...GoTransmuteEdgeInsert\n")
 	if(CONF_NumEdgeInsert>0):
 		TransmuteEdgeInsert(origLine, GoTransmuteInsert)
 	else:
 		GoTransmuteInsert(origLine)
 def GoTransmuteInsert(origLine):
 	global CONF_NumInsert
+	global CONF_Debug
+	if(CONF_Debug):
+		sys.stderr.write("...GoTransmuteInsert\n")
 	if(CONF_NumInsert>0):
 		TransmuteInsert(origLine, GoTransmutePrepend)
 	else:
 		GoTransmutePrepend(origLine)
 def GoTransmutePrepend(origLine):
 	global CONF_NumPrepend
+	global CONF_Debug
+	if(CONF_Debug):
+		sys.stderr.write("...GoTransmutePrepend\n")
 	if(CONF_NumPrepend>0):
 		TransmutePrepend(origLine, GoTransmuteAppend)
 	else:
 		GoTransmuteAppend(origLine)
 def GoTransmuteAppend(origLine):
 	global CONF_NumAppend
+	global CONF_Debug
+	if(CONF_Debug):
+		sys.stderr.write("...GoTransmuteAppend\n")
 	if(CONF_NumAppend>0):
 		TransmuteAppend(origLine, GoTransmuteCaps)
 	else:
 		GoTransmuteCaps(origLine)
 def GoTransmuteCaps(origLine):
 	global CONF_capitalize
+	global CONF_Debug
+	if(CONF_Debug):
+		sys.stderr.write("...GoTransmuteCaps\n")
 	if(True == CONF_capitalize):
-		GoTransmuteLeet(origLine) # change to capitalization transmute
+		TransmuteCaps(origLine, GoTransmuteLeet) # change to capitalization transmute
 	else:
 		GoTransmuteLeet(origLine)
 def GoTransmuteLeet(origLine):
 	global CONF_leet
+	global CONF_Debug
+	if(CONF_Debug):
+		sys.stderr.write("...GoTransmuteLeet\n")
 	if(True == CONF_leet):
 		Print(origLine) # change to leet transmute
 	else:
@@ -252,6 +275,17 @@ def TransmuteEdgeInsert(baseWord, nextFunc):
 			pos += 1
 		insert_Str = getNextIncrement(insert_Str, CONF_AddSet)
 
+def TransmuteCaps(baseWord, nextFunc):
+	nextFunc(baseWord) # first passed call is clean
+
+	matrix = buildCapitalizationSubstitutesMatrix(baseWord)
+	curVal = getNextSubstitute(baseWord, matrix)
+	
+	while( len(curVal)>0 ):
+		print curVal
+		curVal = getNextSubstitute(curVal, matrix)
+		
+
 # use a 2D array...
 
 #original becomes ["o","r","i","g","i","n","a","l"]
@@ -276,8 +310,36 @@ def TransmuteEdgeInsert(baseWord, nextFunc):
 # b 8
 # h |-|
 
-def getNextSubstitute(curVal, valMatrix, curIndex):
+def buildCapitalizationSubstitutesMatrix(origLine):
+	out = []
+	capMap = {}
+	for c in "abcdefghijklmnopqrstuvwxyz":
+		capMap[c] = [c, c.upper()]
+	for c in origLine:
+		if capMap.has_key(c):
+			out += [capMap[c]]
+		else:
+			out += [c]
+	return out
 	pass
+
+def buildLeetSubstitutesMatrix(origLine):
+	pass
+
+def getNextSubstitute(curVal, valMatrix, curIndex = 0):
+	if( curIndex >= len(curVal) ):
+		return "" # out of bounds returns empty string
+	# find matrixIndex at curIndex 
+	matrixIndex = valMatrix[curIndex].index(curVal[curIndex])
+	#print "\t--curVal=\""+curVal+"\", valMatrix="+str(valMatrix)+", curIndex="+str(curIndex)+", matrixIndex=" + str(matrixIndex)
+
+	next = matrixIndex + 1
+	if( next >= len(valMatrix[curIndex]) ):
+		# need to roll to next significant place
+		return getNextSubstitute( curVal[:curIndex] + valMatrix[curIndex][0] + curVal[curIndex+1:], valMatrix, curIndex+1)
+	else:
+		# increment this place only
+		return curVal[:curIndex] + valMatrix[curIndex][next] + curVal[curIndex+1:]
 
 
 def getNextIncrement(curVal, AddSet):
