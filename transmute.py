@@ -331,8 +331,6 @@ def getNextSubstitute(curVal, valMatrix, curIndex = 0):
 		return "" # out of bounds returns empty string
 	# find matrixIndex at curIndex 
 	matrixIndex = valMatrix[curIndex].index(curVal[curIndex])
-	#print "\t--curVal=\""+curVal+"\", valMatrix="+str(valMatrix)+", curIndex="+str(curIndex)+", matrixIndex=" + str(matrixIndex)
-
 	next = matrixIndex + 1
 	if( next >= len(valMatrix[curIndex]) ):
 		# need to roll to next significant place
