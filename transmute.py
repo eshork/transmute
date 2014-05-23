@@ -279,53 +279,43 @@ def TransmuteCaps(baseWord, nextFunc):
 	nextFunc(baseWord) # first passed call is clean
 
 	matrix = buildCapitalizationSubstitutesMatrix(baseWord)
-	curVal = getNextSubstitute(baseWord, matrix)
+	curVal = []
+	for c in baseWord:
+		curVal += [c]
+	curVal = getNextSubstitute(curVal, matrix)
 	
 	while( len(curVal)>0 ):
-		nextFunc(curVal)
+		nextFunc("".join(curVal))
 		curVal = getNextSubstitute(curVal, matrix)
 
 def TransmuteLeet(baseWord, nextFunc):
 	nextFunc(baseWord) # first passed call is clean
 
 	matrix = buildLeetSubstitutesMatrix(baseWord)
-	curVal = getNextSubstitute(baseWord, matrix)
+	curVal = []
+	for c in baseWord:
+		curVal += [c]
+	curVal = getNextSubstitute(curVal, matrix)
 	
 	while( len(curVal)>0 ):
-		nextFunc(curVal)
+		nextFunc("".join(curVal))
 		curVal = getNextSubstitute(curVal, matrix)
 		
-
-# use a 2D array...
-
-
-# i ! | ;
-# l 1 | ! |_
-# e 3
-# t 7
-# a 4
-# s $
-# h #
-# o 0 () [] {} *
-# v \/
-# n |\| |/|
-# D |) |]
-# b 8
-# h |-|
-
-
 def buildLeetSubstitutesMatrix(origLine):
 	out = []
 	capMap = {
 		"i" : ["i","!","|",";"],
-		"l" : ["l", "1","|","!"],
+		"l" : ["l", "1","|","!", "|_"],
 		"e" : ["e", "3"],
 		"t" : ["t", "7"],
 		"a" : ["a", "4", "@"],
 		"s" : ["s", "5", "$"],
-		"h" : ["h", "#"],
-		"o" : ["o", "0", "*"],
+		"h" : ["h", "#", "|-|"],
+		"o" : ["o", "0", "*", "()", "[]", "{}"],
 		"b" : ["b", "8"],
+		"v" : ["v", "\/"],
+		"n" : ["n", "|\|", "|/|"],
+		"d" : ["d", "|)", "|]"],
 	}
 	for c in origLine:
 		if capMap.has_key(c):
@@ -356,10 +346,10 @@ def getNextSubstitute(curVal, valMatrix, curIndex = 0):
 	next = matrixIndex + 1
 	if( next >= len(valMatrix[curIndex]) ):
 		# need to roll to next significant place
-		return getNextSubstitute( curVal[:curIndex] + valMatrix[curIndex][0] + curVal[curIndex+1:], valMatrix, curIndex+1)
+		return getNextSubstitute( curVal[:curIndex] + [ valMatrix[curIndex][0] ] + curVal[curIndex+1:], valMatrix, curIndex+1)
 	else:
 		# increment this place only
-		return curVal[:curIndex] + valMatrix[curIndex][next] + curVal[curIndex+1:]
+		return curVal[:curIndex] + [ valMatrix[curIndex][next] ] + curVal[curIndex+1:]
 
 
 def getNextIncrement(curVal, AddSet):
