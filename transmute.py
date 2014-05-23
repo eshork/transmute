@@ -326,11 +326,14 @@ def buildLeetSubstitutesMatrix(origLine):
 	capMap = {
 		"i" : ["i","!","|",";"],
 		"l" : ["l", "1","|","!"],
+		"e" : ["e", "3"],
+		"t" : ["t", "7"],
+		"a" : ["a", "4", "@"],
+		"s" : ["s", "5", "$"],
+		"h" : ["h", "#"],
+		"o" : ["o", "0", "*"],
+		"b" : ["b", "8"],
 	}
-	# for c in "abcdefghijklmnopqrstuvwxyz":
-	# 	capMap[c] = [c, c.upper()]
-
-
 	for c in origLine:
 		if capMap.has_key(c):
 			out += [capMap[c]]
