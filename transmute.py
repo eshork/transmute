@@ -298,13 +298,6 @@ def TransmuteLeet(baseWord, nextFunc):
 
 # use a 2D array...
 
-#original becomes ["o","r","i","g","i","n","a","l"]
-#then ["o","r","i","g","i","n","a","l"] becomes...
-# ["o","r","i","g","i","n","a","l"]
-# ["0",   ,"1",   ,"1","|\|","a","1"]
-# [   ,   ,"!",   ,"!",   ,   ,"!"]
-# and then we just iterate through all the posibilities with a recursive function (and we can reuse this for the capitalizations as well)
-
 
 # i ! | ;
 # l 1 | ! |_
