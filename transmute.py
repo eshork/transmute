@@ -3,9 +3,10 @@
 
 Generates transmutations of input words according to selected options.
 
-If inputFile is - or not provided, stdin is used.
+If inputFile is - or not provided, and -w is not provided, stdin is used.
 
  -h,--help        Display this help
+ -w <word>        Supply a single <word> as input, via command line argument
  -t               Perform some typical transmutations (-l -p 3 -P 2 -c -n -s)
  -l               Create leet transmutations
  -p <X>           Append up to X places
@@ -79,10 +80,11 @@ def main():
 	CONF_NumInsert = 0
 	CONF_NumEdgeInsert = 0
 	CONF_AddSet = ""
+	CONF_singleWord = None
 
 	# parse command line options
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hdtlcp:P:i:I:nsaA", ["help","list="])
+		opts, args = getopt.getopt(sys.argv[1:], "hdtlcw:p:P:i:I:nsaA", ["help","list="])
 		# pprint(opts)
 		# pprint(args)
 	except getopt.error, msg:
@@ -125,6 +127,8 @@ def main():
 			CONF_AddSet = CONF_AddSet + str(a)
 		if o in ("-c"):
 			CONF_capitalize = True
+		if o in ("-w"):
+			CONF_singleWord = str(a)
 
 	# process arguments
 	if len(args) > 1:
@@ -143,6 +147,7 @@ def main():
 	if(CONF_Debug):
 		sys.stderr.write("CONF_Debug = " + str(CONF_Debug) + "\n")
 		sys.stderr.write("CONF_infile = " + CONF_infile + "\n")
+		sys.stderr.write("CONF_singleWord = " + CONF_singleWord + "\n")
 		sys.stderr.write("CONF_leet = " + str(CONF_leet) + "\n")
 		sys.stderr.write("CONF_capitalize = " + str(CONF_capitalize) + "\n")
 		sys.stderr.write("CONF_NumAppend = " + str(CONF_NumAppend) + "\n")
@@ -152,6 +157,9 @@ def main():
 		sys.stderr.write("CONF_AddSet = [" + str(CONF_AddSet) + "]" + "\n")
 
 
+	if CONF_singleWord != None:
+		GoTransmute(CONF_singleWord)
+		return
 
 	if CONF_infile == '-':
 		FILE = sys.stdin
