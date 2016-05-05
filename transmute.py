@@ -9,6 +9,7 @@ If inputFile is - or not provided, and -w is not provided, stdin is used.
  -w <word>        Supply a single <word> as input, via command line argument
  -t               Perform some typical transmutations (-l -p 3 -P 2 -c -n -s)
  -l               Create leet transmutations
+ -L               Create common leet transmutations
  -p <X>           Append up to X places
  -P <X>           Prepend up to X places
  -i <X>           Insert up to X places, permutated through each inside position
@@ -64,6 +65,7 @@ def cChg_AddSet_AddSymbols():
 def main():
 	global CONF_Debug
 	global CONF_infile
+	global CONF_commonleet
 	global CONF_leet
 	global CONF_capitalize
 	global CONF_NumAppend
@@ -74,6 +76,7 @@ def main():
 	CONF_Debug = False
 	CONF_infile = "-"
 	CONF_leet = False
+	CONF_commonleet = False
 	CONF_capitalize = False
 	CONF_NumAppend = 0
 	CONF_NumPrepend = 0
@@ -84,7 +87,7 @@ def main():
 
 	# parse command line options
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hdtlcw:p:P:i:I:nsaA", ["help","list="])
+		opts, args = getopt.getopt(sys.argv[1:], "hdtlLcw:p:P:i:I:nsaA", ["help","list="])
 		# pprint(opts)
 		# pprint(args)
 	except getopt.error, msg:
@@ -107,6 +110,8 @@ def main():
 			cChg_AddSet_AddSymbols()
 		if o in ("-l"):
 			CONF_leet = True
+		if o in ("-L"):
+			CONF_commonleet = True
 		if o in ("-p"):
 			CONF_NumAppend = int(a)
 		if o in ("-P"):
@@ -149,6 +154,7 @@ def main():
 		sys.stderr.write("CONF_infile = " + CONF_infile + "\n")
 		sys.stderr.write("CONF_singleWord = " + CONF_singleWord + "\n")
 		sys.stderr.write("CONF_leet = " + str(CONF_leet) + "\n")
+		sys.stderr.write("CONF_commonleet = " + str(CONF_commonleet) + "\n")
 		sys.stderr.write("CONF_capitalize = " + str(CONF_capitalize) + "\n")
 		sys.stderr.write("CONF_NumAppend = " + str(CONF_NumAppend) + "\n")
 		sys.stderr.write("CONF_NumPrepend = " + str(CONF_NumPrepend) + "\n")
@@ -223,7 +229,17 @@ def GoTransmuteCaps(origLine):
 	if(CONF_Debug):
 		sys.stderr.write("...GoTransmuteCaps\n")
 	if(True == CONF_capitalize):
-		TransmuteCaps(origLine, GoTransmuteLeet) # change to capitalization transmute
+		TransmuteCaps(origLine, GoTransmuteCommonLeet) # change to common leet transmute
+	else:
+		GoTransmuteCommonLeet(origLine)
+
+def GoTransmuteCommonLeet(origLine):
+	global CONF_commonleet
+	global CONF_Debug
+	if(CONF_Debug):
+		sys.stderr.write("...GoTransmuteCommonLeet\n")
+	if(True == CONF_commonleet):
+		TransmuteCommonLeet(origLine, GoTransmuteLeet) # change to leet transmute
 	else:
 		GoTransmuteLeet(origLine)
 def GoTransmuteLeet(origLine):
@@ -308,7 +324,41 @@ def TransmuteLeet(baseWord, nextFunc):
 	while( len(curVal)>0 ):
 		nextFunc("".join(curVal))
 		curVal = getNextSubstitute(curVal, matrix)
-		
+
+def TransmuteCommonLeet(baseWord, nextFunc):
+	nextFunc(baseWord) # first passed call is clean
+
+	matrix = buildCommonLeetSubstitutesMatrix(baseWord)
+	curVal = []
+	for c in baseWord:
+		curVal += [c]
+	curVal = getNextSubstitute(curVal, matrix)
+	
+	while( len(curVal)>0 ):
+		nextFunc("".join(curVal))
+		curVal = getNextSubstitute(curVal, matrix)
+
+def buildCommonLeetSubstitutesMatrix(origLine):
+	out = []
+	capMap = {
+		"i" : ["i","!","1"],
+		"l" : ["l", "1"],
+		"e" : ["e", "3"],
+		"t" : ["t", "7"],
+		"a" : ["a", "4", "@"],
+		"s" : ["s", "5", "$"],
+		"o" : ["o", "0"],
+		"b" : ["b", "8"],
+	}
+	for c in origLine:
+		if capMap.has_key(c):
+			out += [capMap[c]]
+		else:
+			out += [c]
+	return out
+	pass
+	
+	
 def buildLeetSubstitutesMatrix(origLine):
 	out = []
 	capMap = {
